@@ -1,4 +1,4 @@
-# Healthcare 2 DREAM Demo DREAM Demo in a Box Setup Guide
+# Healthcare 2 DREAM Demo in a Box Setup Guide
 
 ## What is it?
 DREAM Demos in a Box (DDiB) are packaged Industry Scenario DREAM Demos with ARM templates (with a demo web app, Power BI reports, Synapse resources, AML Notebooks etc.) that can be deployed in a customer’s subscription using the CAPE tool in a few hours.  Partners can also deploy DREAM Demos in their own subscriptions using DDiB.
@@ -390,11 +390,11 @@ cd ./healthcare2/healthcare2
 
 	![Adx.](media/adx-4.png)
 	
-5. In the Ingest data, under destination tab, **select** appropriate values in the respective fields, in Cluster **select** the kusto pool name as "hc2kustopool...", in the Database select "MidpCosmosKustoDB" database, in the Table field **enter** the table name i.e. Occupancy and then **click** on Next.
+5. In the Ingest data, under destination tab, **select** appropriate values in the respective fields, in Cluster **select** the kusto pool name as "hc2kustopool...", in the Database select "HC2KustoDB..." database, in the Table field **enter** the table name i.e. monitoring-device and then **click** on Next.
 
 	![Adx.](media/adx-5.png)
 	
-6. Under the source tab, **select** Source type as "Event Hub", in subscription **select** your subscription, in Event Hub Namespace **select** you eventhub namespace i.e. "adx-thermostat-occupancy-...", in Event Hub **enter** "occupancy", in Data connection name **select** "MidpCosmosKustoDB-occupancy", in Consumer group **select** $Default. **Expand** More Parameters section and in compression **select** None and then **click** on Next.
+6. Under the source tab, **select** Source type as "Event Hub", in subscription **select** your subscription, in Event Hub Namespace **select** you eventhub namespace i.e. "evh-patient-monitoring-hc2-...", in Event Hub **enter** "monitoring-device", in Data connection name **select** "HC2KustoDB...-monitoring-device", in Consumer group **select** $Default and then **click** on Next.
 
 	![Adx.](media/adx-6.png)
 	
@@ -406,13 +406,13 @@ cd ./healthcare2/healthcare2
 
 	![Adx.](media/adx-8.png)
 	
-9. Repeat the above step from 4 to 8, replacing few values, i.e. in step 5, this time **enter** the table name as "thermostat", in step 6 **enter** Event Hub as "thermostat" and Data connection name as "MidpCosmosKustoDB-thermostat".
+9. Repeat the above step from 4 to 8, replacing few values, i.e. in step 5, this time **enter** the table name as "operational-analytics", in step 6 **enter** Event Hub as "operational-analytics" and Data connection name as "HC2KustoDB...-operational-analytics".
 	
 ### Task 6: Azure Purview Setup
 
 > **Note:** Firstly you should assign Reader permission to the Azure Purview account starting with name "purviewmidp..." for Cosmos Account, Synapse Workspace and Storage Account starting with name "stmidp...". Once the permission has been granted, proceed with the following steps.
 
-1. From Azure Portal, **search** for Azure purview resource in the resource group and **click** on the resource.
+1. From Azure Portal, **search** for "purview" in the resource group and **click** on the resource.
 
 	![Select Purview Resource.](media/purview-1.png)
 	
@@ -424,7 +424,7 @@ cd ./healthcare2/healthcare2
 
 	![Select Purview Resource.](media/purview-8.png)
 
-4. All the sub collections will be visible, **click** on the "+" sign under AzureDataLakeStorage, AzureSynapse, CosmosDB-midp and PowerBI-midp.
+4. All the sub collections will be visible, **click** on the "+" sign under ADLS, AzureSynapseAnalytics, AzureCosmosDB and PowerBI.
 
 	![Select Purview Resource.](media/purview-9.png)
 
@@ -452,7 +452,7 @@ cd ./healthcare2/healthcare2
 
 	![Select Purview Resource.](media/purview-30.png)
 	
-11. **Repeat** steps #5 to #10 for AzureSynapseAnalytics, AzureSqlDatabase and PowerBI. 
+11. **Run** the scans for AzureSynapseAnalytics, AzureSqlDatabase and PowerBI as well. 
 	
 ### Task 7: Power BI reports and dashboard creation
 
@@ -484,7 +484,7 @@ To give permissions for the Power BI reports to access the data sources:
 	
 	![Dataset.](media/power-bi-report-6.png)
 	
-6. **Click** on the dataset "6 ADX Website Bounce Rate Analysis".
+6. **Click** on the dataset "Healthcare - Bed Occupancy".
 
 7. **Expand** Data source credentials.
 
@@ -502,33 +502,41 @@ To give permissions for the Power BI reports to access the data sources:
 
 	![Validate Creds.](media/power-bi-report-8.png)
 	
-12. **Click** on the dataset "ADX Thermostat and Occupancy".
+12. Again **repeat** the same steps from #8 to step #10 for the Serverless Pool.
 
-13. **Expand** Data source credentials.
+	![Validate Creds.](media/power-bi-report-8.1.png)
+	
+13. **Scroll** down and **click** on the dataset "Payor Dashboard reports".
 
-14. **Click** Edit credentials in front of Synapse and a dialogue box will pop up.
+14. **Expand** Data source credentials.
+
+15. **Click** Edit credentials in front of AzureBlob and a dialogue box will pop up.
 
 	![Data Source Creds.](media/power-bi-report-01.png)
 
-15. **Select** privacy level as Organisational and **Click** on Sign in, a new window will pop-up.
+16. **Select** Authentication method as "OAuth2" and Privacy level as "Organisational" and **Click** on Sign in, a new window will pop-up.
 
 	![Validate Creds.](media/power-bi-report-02.png)
 
-16. In the new window, **select** the appropriate user.
+17. In the new window, **select** the appropriate user.
 
 	![Validate Creds.](media/power-bi-report-03.png)
 		
-17. **Click** on the dataset "Campaign Analytics".
+18. **Click** on the dataset "Healthcare - Call Center Power BI Before".
 
-18. **Expand** Data source credentials.
+19. **Expand** Data source credentials.
 
-19. **Click** Edit credentials in front of AzureDataExplorer and a dialogue box will pop up.
+20. **Click** Edit credentials in front of AIFunctions and a dialogue box will pop up.
 
 	![Data Source Creds.](media/power-bi-report-04.png)
 
-20. **Enter** Username as ‘labsqladmin’. **Enter** the same SQL Administrator login password that was created for [Task 3](#task-3-deploy-the-arm-template) Step #5. **Click** on Sign in.
+21. **Select** Authentication method as "OAuth2" and Privacy level as "Organisational" and **Click** on Sign in, a new window will pop-up.
 
 	![Validate Creds.](media/power-bi-report-8.png)
+	
+22. In the new window, **select** the appropriate user.
+
+	![Validate Creds.](media/power-bi-report-03.png)
 	
 ### Steps to create realtime reports
 
